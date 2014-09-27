@@ -1,41 +1,43 @@
-import numpy as np
+from shapely.geometry import Polygon
 
-
-
-def edge_point_test(e1, p1):
-    pass
-
-def edge_edge_test(p, q):
-    pass
-    e1 = p[1] - p[0]
-    e2 = q[1] - q[0]
-    det = -e1[0]*e2[1] + e1[1]*e2[0]
-
-    # edges are colinear, test for overlap
-    if det < 0:
-        return edge_point_test(p, q[0]) or edge_point_test(p, q[1])
-
-    x = p[0] - q[0]
-
-
-
-class Polygon (object):
-
-    def init(self, vertices, pos):
-        self.v = vertices
-        self.p = pos
-
-    def contains(self, polygon):
+class Geometry(object):
+    def intersects(self, geometry):
         pass
 
-    def intersects(self, polygon):
-        pass
+class Collection(Geometry):
+    """ class for a collection of intersectables """
+    def __init__(self, geometries):
+        """ constructor for the collection """
+        self.geoms = geometries
+        
+    def intersects(self, geometry):
+        test = False
+        for g in self.geoms:
+            test |= geometry.intersects(g)
+            if test:
+                break
+      
 
-    @property
-    def vertices(self):
-        return self.v
-
-    @property
-    def world_vert(self):
-        return self.v + self.p
-
+class Polygon(Geometry):
+    """ class for convex polygon intersection test """
+    def __init__(self, vertices):
+        """ constructor for polygon, vertices must be specified 
+        in counter-clockwise order """
+        
+        # shapely should not be used if the students are implementing this
+        self.poly = Polygon(vertices)
+        
+    def intersects(self, geometry):
+        if isinstance(geometry, Collection):
+            return geometry.intersects(self)
+        else:
+            return self.poly_poly_test(geometry)
+        
+    def poly_poly_test(self, p):
+        """ This method should be implemented by the students but for 
+        demo purposes, shapely is used """
+        return self.poly.intersects(p.poly)
+        
+        
+        
+        
