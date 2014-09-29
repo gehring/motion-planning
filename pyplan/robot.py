@@ -1,10 +1,9 @@
 import numpy as np
-from shapely.geometry import Point
-from shapely.affinity import affine_transform
+from geometry import Point, transform
 
 class Robot(object):
     def get_dist(self, p0, p1):
-        """ This method defines a measure of closeness for some of the 
+        """ This method defines a measure of closeness for some of the
         planners"""
         pass
 
@@ -13,7 +12,12 @@ class Robot(object):
             under a given configuration. Returns None if the configuration is
             illegal."""
         pass
-    
+
+    def get_2D_coord(self, pos):
+        """ This method returns the 2D position (or the origin) of a given
+            configuration on the 2D plane. """
+        pass
+
 
 class Point_Robot(Robot):
     def get_dist(self, p0, p1):
@@ -21,6 +25,9 @@ class Point_Robot(Robot):
 
     def get_geom(self, pos):
         return Point(pos)
+
+    def get_2D_coord(self, pos):
+        return pos
 
 class Poly_Robot(Robot):
     angle_ratio = 0.1
@@ -42,4 +49,8 @@ class Poly_Robot(Robot):
         s = np.sin(angle)
         c = np.cos(angle)
         trans = [c, -s, s, c, pos[0], pos[1]]
-        return affine_transform(self.shape, trans)
+        return transform(self.shape, trans)
+
+    def get_2D_coord(self, pos):
+        return pos[:2]
+

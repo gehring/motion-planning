@@ -11,8 +11,8 @@ class UniformSampler(object):
 
 class Planner(object):
     def __call__(self, start, goal):
-        """ find a path from start to goal. Return a tuple of the path 
-        (None if none is found) with a dict of extra data (for rendering 
+        """ find a path from start to goal. Return a tuple of the path
+        (None if none is found) with a dict of extra data (for rendering
         the results).
         E.g., return path, {'start':tuple(start),
                       'goal':tuple(goal),
@@ -21,9 +21,9 @@ class Planner(object):
         pass
 
 class RRT(Planner):
-    def __init__(self, 
-                 robot, 
-                 enivornment, 
+    def __init__(self,
+                 robot,
+                 enivornment,
                  step_size,
                  sampler = None,
                  max_iterations=5000,
@@ -72,6 +72,7 @@ class RRT(Planner):
         return path, {'start':tuple(start),
                       'goal':tuple(goal),
                       'path':path,
+                      'robot':robot,
                       'screenshots':screenshots}
 
 

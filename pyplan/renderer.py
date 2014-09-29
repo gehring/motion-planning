@@ -9,7 +9,7 @@ class line_point_group(pyglet.graphics.Group):
         super(line_point_group, self).__init__(parent=parent)
         self.line_width = line_width
         self.point_width = point_width
-    
+
     def set_state(self):
         pyglet.gl.glLineWidth(self.line_width)
         pyglet.gl.glPointSize(self.point_width)
@@ -36,7 +36,7 @@ def RRT_draw(self,
         cache arguments won't be released immediately. """
 
     global RRT_RENDER_CACHE
-    cache_key = (rrt_data, 
+    cache_key = (rrt_data,
                  index,
                  goal_color,
                  start_color,
@@ -49,71 +49,73 @@ def RRT_draw(self,
                  path_edge_width,
                  path_node_width,
                  start_goal_width)
-    
+
     if not cache_key in RRT_RENDER_CACHE:
         batch = pyglet.graphics.Batch()
         tree = rrt_data['screenshots'][index]
         path = rrt_data['path']
-        
-        
+        robot = rrt_data['robot']
+
+
         # set up rendering properties -------------------------
-        
+
         # these groups enforce the rendering order
         tree_order = pyglet.graphics.OrderedGroup(0)
         path_order = pyglet.graphics.OrderedGroup(1)
         goal_order = pyglet.graphics.OrderedGroup(2)
-        
+
         # these groups inherent the render order from their parents
         # and set the line and point widths to use during render
-        tree_group = line_point_group(line_width = edge_width, 
+        tree_group = line_point_group(line_width = edge_width,
                                       point_width = node_width,
                                       parent = tree_order)
-        path_group = line_point_group(line_width = path_edge_width, 
+        path_group = line_point_group(line_width = path_edge_width,
                                       point_width = path_node_width,
                                       parent = path_order)
-        goal_group = line_point_group(line_width = start_goal_width, 
+        goal_group = line_point_group(line_width = start_goal_width,
                                       point_width = start_goal_width,
                                       parent = goal_order)
-        
+
         # set up the required rendering calls -----------------
-    
+
         if tree != None:
             # draw edges of the tree
-            edges = [p for e in tree.iteritems() 
+            edges = [robot.get_2D_coord(e) for e in tree.iteritems()
                             if e[0] != rrt_data['start'] for p in e]
             batch.add(len(edges)/2, pyglet.gl.GL_LINES, tree_group
                                      ('v2f', edges),
                                      ('c4B', edge_color*(len(edges)/2)))
-        
+
             # draw nodes of the tree
-            nodes = tree.keys()
+            nodes = [robot.get_2D_coord(v) for v in tree.keys()]
             batch.add(len(nodes), pyglet.gl.GL_POINTS, tree_group
                                      ('v2f', nodes),
                                      ('c4B', node_color*(len(nodes))))
         if path != None:
             # draw edges of the path
             index = ( (i,i) for i in xrange(1, len(path)-1))
-            edges = (path[i] for i in chain((0), *index)) 
+            edges = [robot.get_2D_coord(path[i]) for i in chain((0), *index)]
             batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group
                                      ('v2f', edges),
                                      ('c4B', edge_color*(len(edges)/2)))
-        
+
             # draw nodes of the path
-            nodes = path
+            nodes = [ robot.get_2D_coord(v) for v in path]
             batch.add(len(nodes), pyglet.gl.GL_POINTS, path_group
                                      ('v2f', nodes),
                                      ('c4B', node_color*(len(nodes))))
-    
-    
-    
-    
-    
+
+
+
+
+
         # draw start and goal
-        nodes = (rrt_data['start'], rrt_data['goal'])
+        nodes = (robot.get_2D_coord(rrt_data['start']),
+                 robot.get_2D_coord(rrt_data['goal']))
         color = (start_color, goal_color)
         batch.add(2, pyglet.gl.GL_POINTS, goal_group,
                                  ('v2f', nodes),
                                  ('c4B', color))
-    
+
         RRT_RENDER_CACHE = {cache_key: batch}
     RRT_RENDER_CACHE[cache_key].draw()
