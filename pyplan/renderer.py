@@ -1,7 +1,9 @@
 import pyglet
 from itertools import chain
+from geometry import Collection, Polygon
 
 RRT_RENDER_CACHE = {}
+ENV_RENDER_CACHE = {}
 
 
 class line_point_group(pyglet.graphics.Group):
@@ -94,7 +96,7 @@ def RRT_draw(self,
         if path != None:
             # draw edges of the path
             index = ( (i,i) for i in xrange(1, len(path)-1))
-            edges = [robot.get_2D_coord(path[i]) for i in chain((0), *index)]
+            edges = [robot.get_2D_coord(path[i]) for i in chain((0), *index, (len(path)-1))]
             batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group
                                      ('v2f', edges),
                                      ('c4B', edge_color*(len(edges)/2)))
@@ -119,3 +121,40 @@ def RRT_draw(self,
 
         RRT_RENDER_CACHE = {cache_key: batch}
     RRT_RENDER_CACHE[cache_key].draw()
+
+def Enviornment_draw(environment,
+                     obs_color = (200, 200, 200, 255),
+                     edge_width = 2.0,
+                     point_width = 3.0):
+    global ENV_RENDER_CACHE
+    cache_key = (environment,
+                 obs_color,
+                 edge_width,
+                 point_width)
+
+    if not cache_key in ENV_RENDER_CACHE:
+        batch = pyglet.graphics.Batch()
+        obs =  environment.obstacles
+        group = line_point_group(line_width = edge_width,
+                                      point_width = point_width)
+        add_polygon_render(obs, group,batch, obs_color)
+        ENV_RENDER_CACHE = {cache_key: batch}
+    ENV_RENDER_CACHE[cache_key].draw()
+
+def add_polygon_render(poly, group, batch, color):
+    if isinstance(poly, Collection):
+        for g in poly.geoms:
+            add_polygon_render(g, batch, color)
+    elif isinstance(poly, Polygon):
+        vertices = poly.vertices
+        index = ( (i,i) for i in xrange(1, len(vertices)))
+        edges = [vertices[i] for i in chain((0), *index, (0))]
+        batch.add(len(edges)/2, pyglet.gl.GL_LINES, group,
+                                     ('v2f', edges),
+                                     ('c4B', color*(len(edges)/2)))
+    else:
+        batch.add(1, pyglet.gl.GL_POINTS, group,
+                    ('v2f', poly.coord),
+                    ('c4B', color))
+
+

@@ -31,6 +31,10 @@ class Point(Geometry):
         else:
             return geometry.intersects(self)
 
+    @property
+    def coord(self):
+        return (self.point.x, self.point.y)
+
 class Polygon(Geometry):
     """ class for convex polygon intersection test """
     def __init__(self, vertices):
@@ -57,6 +61,10 @@ class Polygon(Geometry):
         """ This method should be implemented by the students but for
         demo purposes, shapely is used """
         return self.poly.intersects(p.poly)
+
+    @property
+    def vertices(self):
+        return list(self.poly.exterior.coords)
 
 
 def transform(shape, trans):
