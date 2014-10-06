@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 from pyplan.environment import parse_world, Environment
+from pyplan.geometry import Polygon, Collection
 import pickle
 
 if __name__ == '__main__':
@@ -35,56 +36,55 @@ if __name__ == '__main__':
     world_filename = args.world
     out_filename = args.o
     input_error = False
-    
-    
+
+
     error_msg = '''ERROR: File \'{}\' not found for {}.'''
-    overwrite_error_msg = '''ERROR: File \'{}\' exists and will not be 
+    overwrite_error_msg = '''ERROR: File \'{}\' exists and will not be
         overwritten unless the \'--f\' argument is given'''
     code_error_msg= '''ERROR: The {} code must instantiate a variable
         called \'{}\' which implements the {} interface'''
-    
+
     if args.nogui:
         if not os.path.exists(planner_filename):
             input_error = True
             print error_msg.format(planner_filename)
-            
+
         if not os.path.exists(robot_filename):
             input_error = True
             print error_msg.format(robot_filename)
-        
+
         if not os.path.exists(world_filename):
             input_error = True
             print error_msg.format(world_filename)
-            
+
         if os.path.exists(out_filename) and not args.f:
             input_error = True
             print overwrite_error_msg.format( out_filename)
-            
+
         robot = None
         execfile(robot_filename)
         if robot == None:
             input_error = True
             print code_error_msg.format(*(['robot']*3))
-            
-        start, goal, pos_range, obstacles = parse_world(world_filename)
-        enivornment = Environment(obstacles, robot, pos_range)
-        
+
+        start, goal, pos_range, poly = parse_world(world_filename)
+        enivornment = Environment(Collection([Polygon(p) for p in poly]), robot, pos_range)
+
         planner = None
         execfile(planner_filename)
         if planner == None:
             input_error = True
             print code_error_msg.format(*(['planner']*3))
-            
+
         if input_error:
             sys.exit(1)
-            
+
         print 'Running planner...'
         path, data = planner(start, goal)
         with open(out_filename, 'wb') as f:
             pickle.dump(data, f)
-            
+
     else:
         print 'Still no GUI, use the --nogui argument... Work in progress!'
-            
-       
-            
+
+
