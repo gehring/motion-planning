@@ -83,8 +83,8 @@ def RRT_draw(self,
                                  ('c4B', node_color*(len(nodes))))
     if path != None:
         # draw edges of the path
-        index = ( (i,i) for i in xrange(1, len(path)-1))
-        edges = [robot.get_2D_coord(path[i]) for i in chain((0), *index, (len(path)-1))]
+        index = [(i,i) for i in xrange(1, len(path)-1)] + (len(path)-1)
+        edges = [robot.get_2D_coord(path[i]) for i in chain((0), *index)]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group
                                  ('v2f', edges),
                                  ('c4B', edge_color*(len(edges)/2)))
@@ -127,8 +127,8 @@ def add_polygon_render(poly, group, batch, color):
             add_polygon_render(g, batch, color)
     elif isinstance(poly, Polygon):
         vertices = poly.vertices
-        index = ( (i,i) for i in xrange(1, len(vertices)))
-        edges = [vertices[i] for i in chain((0), *index, (0))]
+        index = [ (i,i) for i in xrange(1, len(vertices))] + (0)
+        edges = [vertices[i] for i in chain((0), *index)]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, group,
                                      ('v2f', edges),
                                      ('c4B', color*(len(edges)/2)))
