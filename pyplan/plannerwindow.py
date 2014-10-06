@@ -24,8 +24,8 @@ window = pyglet.window.Window(config=config, resizable=True)
 filepath = 'test.xml'
 robot = Point_Robot()
 start, goal, pos_range, polys = parse_world(filepath)
-envio = Environment(Collection([Polygon(p) for p in polys]), robot, pos_range)
-rrt_planner = RRT(enviornment = envio, robot = robot, step_size = 0.1)
+envi = Environment(Collection([Polygon(p) for p in polys]), robot, pos_range)
+rrt_planner = RRT(environment = envi, robot = robot, step_size = 0.1)
 
 path, rrt_data = rrt_planner(start, goal)
 renderer = Renderer(rrt_data, render_call=RRT_draw)

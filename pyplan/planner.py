@@ -23,14 +23,14 @@ class Planner(object):
 class RRT(Planner):
     def __init__(self,
                  robot,
-                 enivornment,
+                 environment,
                  step_size,
                  sampler = None,
                  max_iterations=5000,
                  screenshot_rate = 1,
                  save_screenshots = False):
         self.sampler = sampler
-        self.environment = enivornment
+        self.environment = environment
         self.robot = robot
         self.step_size = step_size
         self.max_iterations = max_iterations
