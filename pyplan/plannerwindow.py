@@ -33,3 +33,12 @@ renderer = Renderer(rrt_data, render_call=RRT_draw)
 @window.event
 def on_draw():
     renderer.draw()
+
+if __name__ == '__main__':
+    pyglet.gl.glEnable(pyglet.gl.GL_BLEND)
+    pyglet.gl.glBlendFunc(pyglet.gl.GL_SRC_ALPHA, pyglet.gl.GL_ONE_MINUS_SRC_ALPHA)
+    pyglet.gl.glEnable(pyglet.gl.GL_LINE_SMOOTH )
+    pyglet.gl.glEnable(pyglet.gl.GL_POLYGON_SMOOTH )
+    pyglet.gl.glEnable(pyglet.gl.GL_POINT_SMOOTH )
+    pyglet.gl.glClearColor(0, 0, 0, 1.0)
+    pyglet.app.run()

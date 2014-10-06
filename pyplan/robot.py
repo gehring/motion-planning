@@ -21,7 +21,7 @@ class Robot(object):
 
 class Point_Robot(Robot):
     def get_dist(self, p0, p1):
-        return np.linalg.norm(p0-p1)
+        return np.linalg.norm(p0 - p1)
 
     def get_geom(self, pos):
         return Point(pos)

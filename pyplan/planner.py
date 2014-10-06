@@ -50,7 +50,7 @@ class RRT(Planner):
         last_point = start
         count = 0
         screenshots = []
-        while robot.get_dist(last_point, goal) > self.step_size \
+        while robot.get_dist(np.array(last_point), np.array(goal)) > self.step_size \
                     and count < self.max_iterations:
             if self.save_screenshots and count % self.screenshot_rate == 0:
                 screenshots.append(tree.copy())
@@ -62,7 +62,7 @@ class RRT(Planner):
             tree[tuple(last_point)] = near
             count += 1
 
-        if robot.get_dist(last_point, goal) > self.step_size:
+        if robot.get_dist( np.array(last_point),  np.array(goal)) > self.step_size:
             tree[tuple(goal)] = last_point
             path = self.get_path(goal, tree)
         else:
@@ -80,14 +80,14 @@ class RRT(Planner):
     def sample_new_point(self, sampler, tree, step_size, robot, environment):
         point = sampler()
         near = min(tree.iterkey(), key= lambda x: np.linalg.norm(point - x))
-        d = robot.get_dist(point, near)
+        d = robot.get_dist( np.array(point),  np.array(near))
         point -= near
         point *= step_size/d
 
         while environment.check_line_intersect(robot, near, point):
             point = sampler()
             near = min(tree.iterkey(), key= lambda x: np.linalg.norm(point - x))
-            d = robot.get_dist(point, near)
+            d = robot.get_dist( np.array(point),  np.array(near))
             point -= near
             point *= step_size/d
         return point, near
