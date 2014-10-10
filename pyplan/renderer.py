@@ -76,9 +76,9 @@ def RRT_draw(rrt_data,
 
         # draw nodes of the tree
         nodes = [robot.get_2D_coord(v) for v in tree.keys()]
-        batch.add(len(nodes), pyglet.gl.GL_POINTS, tree_group,
+        batch.add(len(nodes)/2, pyglet.gl.GL_POINTS, tree_group,
                                  ('v2f', nodes),
-                                 ('c4B', node_color*(len(nodes))))
+                                 ('c4B', node_color*(len(nodes)/2)))
     if path != None:
         # draw edges of the path
         index = [(i,i) for i in xrange(1, len(path)-1)] + (len(path)-1)
@@ -90,9 +90,9 @@ def RRT_draw(rrt_data,
 
         # draw nodes of the path
         nodes = [ x for v in path for x in robot.get_2D_coord(v)]
-        batch.add(len(nodes), pyglet.gl.GL_POINTS, path_group,
+        batch.add(len(nodes)/2, pyglet.gl.GL_POINTS, path_group,
                                  ('v2f', nodes),
-                                 ('c4B', node_color*(len(nodes))))
+                                 ('c4B', node_color*(len(nodes)/2)))
 
 
 
@@ -102,7 +102,7 @@ def RRT_draw(rrt_data,
     nodes = (robot.get_2D_coord(rrt_data['start']),
              robot.get_2D_coord(rrt_data['goal']))
     nodes = tuple(chain(*nodes))
-    color = (start_color, goal_color)
+    color = tuple(chain(start_color, goal_color))
     batch.add(2, pyglet.gl.GL_POINTS, goal_group,
                              ('v2f', nodes),
                              ('c4B', color))
