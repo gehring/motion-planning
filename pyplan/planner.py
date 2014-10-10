@@ -62,7 +62,7 @@ class RRT(Planner):
             tree[tuple(last_point)] = near
             count += 1
 
-        if robot.get_dist( np.array(last_point),  np.array(goal)) > self.step_size:
+        if robot.get_dist( np.array(last_point),  np.array(goal)) < self.step_size:
             tree[tuple(goal)] = tuple(last_point)
             path = self.get_path(tuple(goal), tree)
         else:
@@ -94,6 +94,7 @@ class RRT(Planner):
 
     def get_path(self, point, tree):
         path = [point]
+        print tree
         while tree[point] != None:
             point = tree[point]
             path.append(point)
