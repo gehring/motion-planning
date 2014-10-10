@@ -79,14 +79,14 @@ class RRT(Planner):
 
     def sample_new_point(self, sampler, tree, step_size, robot, environment):
         point = sampler()
-        near = min(tree.iterkey(), key= lambda x: np.linalg.norm(point - x))
+        near = min(tree.iterkeys(), key= lambda x: np.linalg.norm(point - x))
         d = robot.get_dist( np.array(point),  np.array(near))
         point -= near
         point *= step_size/d
 
         while environment.check_line_intersect(robot, near, point):
             point = sampler()
-            near = min(tree.iterkey(), key= lambda x: np.linalg.norm(point - x))
+            near = min(tree.iterkeys(), key= lambda x: np.linalg.norm(point - x))
             d = robot.get_dist( np.array(point),  np.array(near))
             point -= near
             point *= step_size/d
