@@ -119,13 +119,13 @@ def Enviornment_draw(environment,
     obs =  environment.obstacles
     group = line_point_group(line_width = edge_width,
                                   point_width = point_width)
-    add_polygon_render(obs, group,batch, obs_color)
+    add_polygon_render(obs, group, batch, obs_color)
     return batch
 
 def add_polygon_render(poly, group, batch, color):
     if isinstance(poly, Collection):
         for g in poly.geoms:
-            add_polygon_render(g, batch, color)
+            add_polygon_render(g, group, batch, color)
     elif isinstance(poly, Polygon):
         vertices = poly.vertices
         index = [ (i,i) for i in xrange(1, len(vertices))] + (0)
