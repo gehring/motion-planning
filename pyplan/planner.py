@@ -69,7 +69,7 @@ class RRT(Planner):
             path = None
         screenshots.append(tree.copy())
 
-        print len(tree.keys())
+        print screenshots
         return path, {'start':tuple(start),
                       'goal':tuple(goal),
                       'path':path,
