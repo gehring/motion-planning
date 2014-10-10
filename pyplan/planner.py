@@ -64,7 +64,7 @@ class RRT(Planner):
 
         if robot.get_dist( np.array(last_point),  np.array(goal)) > self.step_size:
             tree[tuple(goal)] = last_point
-            path = self.get_path(goal, tree)
+            path = self.get_path(tuple(goal), tree)
         else:
             path = None
         screenshots.append(tree.copy())
