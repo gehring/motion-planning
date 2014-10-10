@@ -45,6 +45,9 @@ class Environment(object):
             return self.obstacles.intersects(robot_geom)
 
     def check_line_intersect(self, robot, p0, p1):
-        return False #np.any( (self.check_intersect(robot,p) for p in np.linspace(p0, p1, self.line_check_samples)))
+        return np.any( (self.check_intersect(robot,p)
+                        for p in robot.sample_config(p0,
+                                                     p1,
+                                                     self.line_check_samples)))
 
 

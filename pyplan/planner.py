@@ -85,7 +85,7 @@ class RRT(Planner):
         point -= near
         point *= step_size/d
 
-        while environment.check_line_intersect(robot, near, point):
+        while environment.check_line_intersect(robot, np.array(near), point):
             point = sampler()
             near = min(tree.iterkeys(), key= lambda x: np.linalg.norm(point - x))
             d = robot.get_dist( np.array(point),  np.array(near))

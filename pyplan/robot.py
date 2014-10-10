@@ -18,6 +18,11 @@ class Robot(object):
             configuration on the 2D plane. """
         pass
 
+    def sample_config(self, pos1, pos2, nsamples):
+        """ This method returns a series of samples configuration between
+            two given configuration points (including the originals) """
+        pass
+
 
 class Point_Robot(Robot):
     def get_dist(self, p0, p1):
@@ -28,6 +33,9 @@ class Point_Robot(Robot):
 
     def get_2D_coord(self, pos):
         return pos
+
+    def sample_config(self, pos1, pos2, nsamples):
+        return np.linspace(pos1, pos2, self.line_check_samples)
 
 class Poly_Robot(Robot):
     angle_ratio = 0.1
@@ -54,3 +62,5 @@ class Poly_Robot(Robot):
     def get_2D_coord(self, pos):
         return pos[:2]
 
+    def sample_config(self, pos1, pos2, nsamples):
+        return None
