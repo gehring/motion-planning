@@ -6,7 +6,7 @@ class UniformSampler(object):
 
     def __call__(self):
         x = np.random.uniform(self.range[0].size)
-        return (x-self.range[0])(self.range[1]-self.range[0])
+        return (x-self.range[0])/(self.range[1]-self.range[0])
 
 
 class Planner(object):
