@@ -129,7 +129,7 @@ def add_polygon_render(poly, group, batch, color):
     elif isinstance(poly, Polygon):
         vertices = poly.vertices
         index = [ (i,i) for i in xrange(1, len(vertices))] + [0]
-        edges = [x for i in chain((0), *index) for x in vertices[i]]
+        edges = [x for i in chain([0], *index) for x in vertices[i]]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, group,
                                      ('v2f', edges),
                                      ('c4B', color*(len(edges)/2)))
