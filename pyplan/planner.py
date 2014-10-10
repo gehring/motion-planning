@@ -5,7 +5,7 @@ class UniformSampler(object):
         self.range = sample_range
 
     def __call__(self):
-        x = np.random.uniform(self.range[0].size)
+        x = np.random.rand(self.range[0].size)
         return (x-self.range[0])/(self.range[1]-self.range[0])
 
 
@@ -79,7 +79,6 @@ class RRT(Planner):
 
     def sample_new_point(self, sampler, tree, step_size, robot, environment):
         point = sampler()
-        print point
         near = min(tree.iterkeys(), key= lambda x: np.linalg.norm(point - x))
         d = robot.get_dist( np.array(point),  np.array(near))
         point -= near
