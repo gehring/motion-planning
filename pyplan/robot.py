@@ -35,6 +35,8 @@ class Point_Robot(Robot):
         return pos
 
     def sample_config(self, pos1, pos2, nsamples):
+        print pos1
+        print pos2
         return np.linspace(pos1, pos2, nsamples)
 
 class Poly_Robot(Robot):
