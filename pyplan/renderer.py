@@ -30,10 +30,10 @@ def RRT_draw(rrt_data,
              edge_color = (200, 150, 100, 255),
              path_node_color = (150, 150, 150, 255),
              path_edge_color = (100, 150, 100, 255),
-             edge_width = 2.0,
-             node_width = 2.0,
-             path_edge_width = 4.0,
-             path_node_width = 4.0,
+             edge_width = 1.0,
+             node_width = 3.0,
+             path_edge_width = 2.0,
+             path_node_width = 6.0,
              start_goal_width = 8.0):
     """ Get a batch renderer for a specific screenshot of a RRT algorithm. """
 
