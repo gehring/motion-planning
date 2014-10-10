@@ -59,7 +59,7 @@ class RRT(Planner):
                                                      self.step_size,
                                                      robot,
                                                      environment)
-            tree[tuple(last_point)] = near
+            tree[tuple(last_point)] = tuple(near)
             count += 1
 
         if robot.get_dist( np.array(last_point),  np.array(goal)) > self.step_size:
