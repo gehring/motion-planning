@@ -51,7 +51,7 @@ def RRT_draw(rrt_data,
     path_order = pyglet.graphics.OrderedGroup(1)
     goal_order = pyglet.graphics.OrderedGroup(2)
 
-    # these groups inherent the render order from their parents
+    # these groups inherit the render order from their parents
     # and set the line and point widths to use during render
     tree_group = line_point_group(line_width = edge_width,
                                   point_width = node_width,
@@ -67,8 +67,9 @@ def RRT_draw(rrt_data,
 
     if tree != None:
         # draw edges of the tree
-        edges = [robot.get_2D_coord(p) for e in tree.iteritems()
-                        if e[0] != rrt_data['start'] for p in e]
+        edges = [x for e in tree.iteritems()
+                        if e[0] != rrt_data['start'] for p in e
+                                                for x in robot.get_2D_coord(p)]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, tree_group,
                                  ('v2f', edges),
                                  ('c4B', edge_color*(len(edges)/2)))
@@ -81,13 +82,14 @@ def RRT_draw(rrt_data,
     if path != None:
         # draw edges of the path
         index = [(i,i) for i in xrange(1, len(path)-1)] + (len(path)-1)
-        edges = [robot.get_2D_coord(path[i]) for i in chain((0), *index)]
+        edges = [x for i in chain((0), *index)
+                                        for x in robot.get_2D_coord(path[i])]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group,
                                  ('v2f', edges),
                                  ('c4B', edge_color*(len(edges)/2)))
 
         # draw nodes of the path
-        nodes = [ robot.get_2D_coord(v) for v in path]
+        nodes = [ x for v in path for x in robot.get_2D_coord(v)]
         batch.add(len(nodes), pyglet.gl.GL_POINTS, path_group,
                                  ('v2f', nodes),
                                  ('c4B', node_color*(len(nodes))))
@@ -99,6 +101,7 @@ def RRT_draw(rrt_data,
     # draw start and goal
     nodes = (robot.get_2D_coord(rrt_data['start']),
              robot.get_2D_coord(rrt_data['goal']))
+    nodes = tuple(chain(*nodes))
     color = (start_color, goal_color)
     batch.add(2, pyglet.gl.GL_POINTS, goal_group,
                              ('v2f', nodes),
@@ -125,7 +128,7 @@ def add_polygon_render(poly, group, batch, color):
     elif isinstance(poly, Polygon):
         vertices = poly.vertices
         index = [ (i,i) for i in xrange(1, len(vertices))] + (0)
-        edges = [vertices[i] for i in chain((0), *index)]
+        edges = [x for i in chain((0), *index) for x in vertices[i]]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, group,
                                      ('v2f', edges),
                                      ('c4B', color*(len(edges)/2)))
