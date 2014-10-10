@@ -29,7 +29,7 @@ def RRT_draw(rrt_data,
              node_color = (150, 150, 100, 255),
              edge_color = (200, 150, 100, 255),
              path_node_color = (150, 150, 150, 255),
-             path_edge_color = (100, 150, 250, 255),
+             path_edge_color = (100, 150, 200, 255),
              edge_width = 1.0,
              node_width = 3.0,
              path_edge_width = 2.0,
@@ -87,13 +87,13 @@ def RRT_draw(rrt_data,
                                         for x in robot.get_2D_coord(path[i])]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group,
                                  ('v2f', edges),
-                                 ('c4B', edge_color*(len(edges)/2)))
+                                 ('c4B', path_edge_color*(len(edges)/2)))
 
         # draw nodes of the path
         nodes = [ x for v in path for x in robot.get_2D_coord(v)]
         batch.add(len(nodes)/2, pyglet.gl.GL_POINTS, path_group,
                                  ('v2f', nodes),
-                                 ('c4B', node_color*(len(nodes)/2)))
+                                 ('c4B', path_node_color*(len(nodes)/2)))
 
 
 
