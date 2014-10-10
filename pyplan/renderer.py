@@ -67,7 +67,7 @@ def RRT_draw(rrt_data,
 
     if tree != None:
         # draw edges of the tree
-        edges = [robot.get_2D_coord(e) for e in tree.iteritems()
+        edges = [robot.get_2D_coord(p) for e in tree.iteritems()
                         if e[0] != rrt_data['start'] for p in e]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, tree_group,
                                  ('v2f', edges),
