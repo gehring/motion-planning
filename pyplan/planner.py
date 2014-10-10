@@ -94,7 +94,6 @@ class RRT(Planner):
 
     def get_path(self, point, tree):
         path = [point]
-        print tree
         while tree[point] != None:
             point = tree[point]
             path.append(point)

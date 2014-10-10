@@ -24,8 +24,7 @@ class Renderer(object):
     def draw(self):
         self.batch.draw()
 
-def RRT_draw(self,
-             rrt_data,
+def RRT_draw(rrt_data,
              index = -1,
              goal_color = (200, 150, 100, 255),
              start_color = (200, 150, 100, 255),
