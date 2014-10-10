@@ -35,7 +35,7 @@ class Point_Robot(Robot):
         return pos
 
     def sample_config(self, pos1, pos2, nsamples):
-        return np.linspace(pos1, pos2, self.line_check_samples)
+        return np.linspace(pos1, pos2, nsamples)
 
 class Poly_Robot(Robot):
     angle_ratio = 0.1
