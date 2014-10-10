@@ -35,7 +35,7 @@ class Point_Robot(Robot):
         return pos
 
     def sample_config(self, pos1, pos2, nsamples):
-        return np.array([np.linspace(i, j, nsamples) for i,j in zip(pos1, pos2)]).T
+        return np.array([np.linspace(i, j, nsamples) for i,j in zip(pos1, pos2)])
 
 class Poly_Robot(Robot):
     angle_ratio = 0.1
