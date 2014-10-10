@@ -1,5 +1,6 @@
 import numpy as np
 import xml.etree.ElementTree as ET
+from pyplan.geometry import Collection
 
 def parse_world(filename):
     e = ET.parse(filename).getroot()
@@ -45,9 +46,8 @@ class Environment(object):
             return self.obstacles.intersects(robot_geom)
 
     def check_line_intersect(self, robot, p0, p1):
-        return np.any( (self.check_intersect(robot,p)
-                        for p in robot.sample_config(p0,
-                                                     p1,
-                                                     self.line_check_samples)))
+        geoms = [robot.get_geom(p)
+                 for p in robot.sample_config(p0,p1,self.line_check_samples)]
+        return self.obstacles.intersects(Collection(geoms))
 
 
