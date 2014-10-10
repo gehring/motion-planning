@@ -75,7 +75,8 @@ def RRT_draw(rrt_data,
                                  ('c4B', edge_color*(len(edges)/2)))
 
         # draw nodes of the tree
-        nodes = [robot.get_2D_coord(v) for v in tree.keys()]
+        nodes = [ x for v in tree.keys()
+                            for x in robot.get_2D_coord(v)]
         batch.add(len(nodes)/2, pyglet.gl.GL_POINTS, tree_group,
                                  ('v2f', nodes),
                                  ('c4B', node_color*(len(nodes)/2)))
