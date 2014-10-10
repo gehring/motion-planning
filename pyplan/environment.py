@@ -21,10 +21,10 @@ def parse_world(filename):
     re= e.find('rangey')
     rangey = ( float(re.attrib['min']), float(re.attrib['max']) )
 
-    return (start, 
-            goal, 
-            (np.array([rangex[0], rangey[0]]), 
-             np.array([rangex[1], rangey[1]])), 
+    return (start,
+            goal,
+            (np.array([rangex[0], rangey[0]]),
+             np.array([rangex[1], rangey[1]])),
             polygons)
 
 class Environment(object):
@@ -36,7 +36,7 @@ class Environment(object):
         self.line_check_samples = line_check_samples
 
     def check_intersect(self, robot, pos):
-        """ check if a given configuration of the robot violates a constraint 
+        """ check if a given configuration of the robot violates a constraint
             (e.g., collision with obstacle or impossible configuration. """
         robot_geom = robot.get_geom(pos)
         if robot_geom == None:
@@ -45,7 +45,6 @@ class Environment(object):
             return self.obstacles.intersects(robot_geom)
 
     def check_line_intersect(self, robot, p0, p1):
-        return np.any( (self.check_intersect(robot,p)
-                        for p in np.linspace(p0, p1, self.line_check_samples)))
+        return False #np.any( (self.check_intersect(robot,p) for p in np.linspace(p0, p1, self.line_check_samples)))
 
 
