@@ -18,6 +18,7 @@ class Collection(Geometry):
             test |= geometry.intersects(g)
             if test:
                 break
+        return test
 
 class Point(Geometry):
     """ class for a point """
