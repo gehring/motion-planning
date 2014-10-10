@@ -12,8 +12,6 @@ class line_point_group(pyglet.graphics.Group):
         pyglet.gl.glLineWidth(self.line_width)
         pyglet.gl.glPointSize(self.point_width)
 
-    def unset_state(self):
-        pass
 
 class Renderer(object):
     def __init__(self, **kargs):
@@ -71,26 +69,26 @@ def RRT_draw(rrt_data,
         # draw edges of the tree
         edges = [robot.get_2D_coord(e) for e in tree.iteritems()
                         if e[0] != rrt_data['start'] for p in e]
-        batch.add(len(edges)/2, pyglet.gl.GL_LINES, tree_group
+        batch.add(len(edges)/2, pyglet.gl.GL_LINES, tree_group,
                                  ('v2f', edges),
                                  ('c4B', edge_color*(len(edges)/2)))
 
         # draw nodes of the tree
         nodes = [robot.get_2D_coord(v) for v in tree.keys()]
-        batch.add(len(nodes), pyglet.gl.GL_POINTS, tree_group
+        batch.add(len(nodes), pyglet.gl.GL_POINTS, tree_group,
                                  ('v2f', nodes),
                                  ('c4B', node_color*(len(nodes))))
     if path != None:
         # draw edges of the path
         index = [(i,i) for i in xrange(1, len(path)-1)] + (len(path)-1)
         edges = [robot.get_2D_coord(path[i]) for i in chain((0), *index)]
-        batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group
+        batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group,
                                  ('v2f', edges),
                                  ('c4B', edge_color*(len(edges)/2)))
 
         # draw nodes of the path
         nodes = [ robot.get_2D_coord(v) for v in path]
-        batch.add(len(nodes), pyglet.gl.GL_POINTS, path_group
+        batch.add(len(nodes), pyglet.gl.GL_POINTS, path_group,
                                  ('v2f', nodes),
                                  ('c4B', node_color*(len(nodes))))
 
