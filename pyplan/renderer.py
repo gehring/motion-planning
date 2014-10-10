@@ -82,8 +82,8 @@ def RRT_draw(rrt_data,
                                  ('c4B', node_color*(len(nodes)/2)))
     if path != None:
         # draw edges of the path
-        index = [(i,i) for i in xrange(1, len(path)-1)] + (len(path)-1)
-        edges = [x for i in chain((0), *index)
+        index = [(i,i) for i in xrange(1, len(path)-1)] + [[len(path)-1]]
+        edges = [x for i in chain([0], *index)
                                         for x in robot.get_2D_coord(path[i])]
         batch.add(len(edges)/2, pyglet.gl.GL_LINES, path_group,
                                  ('v2f', edges),
