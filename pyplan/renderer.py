@@ -159,3 +159,21 @@ def set_projection(environment, width, height):
 
         pyglet.gl.glMatrixMode(pyglet.gl.GL_MODELVIEW)
 
+def get_mouse_coord(x, y):
+        vp = (pyglet.gl.GLint * 4)()
+        mvm = (pyglet.gl.GLdouble * 16)()
+        pm = (pyglet.gl.GLdouble * 16)()
+
+        pyglet.gl.glGetIntegerv(pyglet.gl.GL_VIEWPORT, vp)
+        pyglet.gl.glGetDoublev(pyglet.gl.GL_MODELVIEW_MATRIX, mvm)
+        pyglet.gl.glGetDoublev(pyglet.gl.GL_PROJECTION_MATRIX, pm)
+
+        wx = pyglet.gl.GLdouble()
+        wy = pyglet.gl.GLdouble()
+        wz = pyglet.gl.GLdouble()
+
+        pyglet.gl.gluUnProject(x, y, 0, mvm, pm, vp, wx, wy, wz)
+        mcoord = (wx.value, wy.value)
+
+        return mcoord
+
