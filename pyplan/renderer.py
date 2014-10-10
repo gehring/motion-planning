@@ -138,4 +138,24 @@ def add_polygon_render(poly, group, batch, color):
                     ('v2f', poly.coord),
                     ('c4B', color))
 
+def set_projection(environment, width, height):
+        pyglet.gl.glMatrixMode(pyglet.gl.GL_PROJECTION)
+        pyglet.gl.glLoadIdentity()
+
+        rangex = (environment.config_range[0][0], environment.config_range[1][0])
+        rangey = (environment.config_range[0][1], environment.config_range[1][1])
+
+        ratio = float(height)/width
+        lx = rangex[1] - rangex[0]
+        ly = rangey[1] - rangey[0]
+
+        if lx*ratio >= ly:
+            dy = lx*ratio - ly
+            pyglet.gl.glOrtho(rangex[0], rangex[1], rangey[0]- dy/2, rangey[1]+dy/2, -1, 1)
+        else:
+            dx = ly/ratio - lx
+            pyglet.gl.glOrtho(rangex[0]-dx/2, rangex[1] + dx/2, rangey[0], rangey[1], -1, 1)
+
+
+        pyglet.gl.glMatrixMode(pyglet.gl.GL_MODELVIEW)
 
