@@ -69,7 +69,6 @@ class RRT(Planner):
             path = None
         screenshots.append(tree.copy())
 
-        print screenshots
         return path, {'start':tuple(start),
                       'goal':tuple(goal),
                       'path':path,
@@ -80,6 +79,7 @@ class RRT(Planner):
 
     def sample_new_point(self, sampler, tree, step_size, robot, environment):
         point = sampler()
+        print point
         near = min(tree.iterkeys(), key= lambda x: np.linalg.norm(point - x))
         d = robot.get_dist( np.array(point),  np.array(near))
         point -= near
