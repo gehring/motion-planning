@@ -48,6 +48,7 @@ class Environment(object):
     def check_line_intersect(self, robot, p0, p1):
         geoms = [robot.get_geom(p)
                  for p in robot.sample_config(p0,p1,self.line_check_samples)]
-        return False#self.obstacles.intersects(Collection(geoms))
+        print geoms
+        return self.obstacles.intersects(Collection(geoms))
 
 
