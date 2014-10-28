@@ -80,7 +80,8 @@ def RRT_draw(rrt_data,
         batch.add(len(nodes)/2, pyglet.gl.GL_POINTS, tree_group,
                                  ('v2f', nodes),
                                  ('c4B', node_color*(len(nodes)/2)))
-    if path != None:
+    # only render path if it exists and we are rendering the last screenshot
+    if path != None and (index == -1 or index == len(rrt_data['screenshots'])-1):
         # draw edges of the path
         index = [(i,i) for i in xrange(1, len(path)-1)] + [[len(path)-1]]
         edges = [x for i in chain([0], *index)
