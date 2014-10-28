@@ -19,7 +19,7 @@ class Robot(object):
         pass
 
     def sample_config(self, pos1, pos2, nsamples):
-        """ This method returns a series of samples configuration between
+        """ This method returns a series of interpolated configuration between
             two given configuration points (including the originals) """
         pass
 
