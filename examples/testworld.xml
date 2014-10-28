@@ -1,0 +1,12 @@
+<world>
+	<rangex min="0" max="10"/>
+	<rangey min="0" max="10"/>
+	<start x="1" y="1"/>
+	<goal x="9" y="9"/>
+	<obstacle>
+		<vertex x="3" y="3"/>
+		<vertex x="5" y="4"/>
+		<vertex x="7" y="7"/>
+		<vertex x="4" y="7"/>
+	</obstacle>
+</world>
