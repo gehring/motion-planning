@@ -26,7 +26,11 @@ class Robot(object):
 
 class Point_Robot(Robot):
     def get_dist(self, p0, p1):
-        return np.linalg.norm(p0 - p1)
+        if p0.ndim>1 or p1.ndim>1:
+            axis = 1
+        else:
+            axis = None
+        return np.linalg.norm(p0 - p1, axis=axis)
 
     def get_geom(self, pos):
         return Point(pos)

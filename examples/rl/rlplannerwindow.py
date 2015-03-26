@@ -1,27 +1,28 @@
 import pyglet
-from pyplan.environment import parse_world, Environment
+from pyplan.environment import parse_world, SampledExpansionEnvironment
 from pyplan.geometry import Polygon, Collection
 from pyplan.robot import Point_Robot
-from pyplan.renderer import Renderer, RRT_draw, Enviornment_draw, set_projection
+from pyplan.renderer import Renderer, KBRLRRT_draw, Enviornment_draw, set_projection
 from pyplan.renderer import get_mouse_coord
-from pyplan.planner import RRT
+from pyplan.planner import KBRL_RRT
 from pyglet.window import key
 import numpy as np
-
-
 
 filepath = 'testworld.xml'
 robot = Point_Robot()
 start, goal, pos_range, polys = parse_world(filepath)
-envi = Environment(Collection([Polygon(p) for p in polys]), robot, pos_range)
-rrt_planner = RRT(environment = envi,
-                  robot = robot,
-                  step_size = 0.5,
-                  max_iterations = 200,
-                  screenshot_rate = 20,
-                  save_screenshots = True)
+envi = SampledExpansionEnvironment(Collection([Polygon(p) for p in polys]), robot, pos_range)
 
-path, rrt_data = rrt_planner(start, goal)
+planner = KBRL_RRT(robot = robot, 
+                   environment = envi, 
+                   dist_to_goal = 0.5, 
+                   max_iterations = 200, 
+                   bias = 1, 
+                   psi = None, 
+                   screenshot_rate = 20, 
+                   save_screenshots = True)
+
+path, rrt_data = planner(start, goal)
 index_range = [0, len(rrt_data['screenshots'])-1]
 index = len(rrt_data['screenshots'])-1
 
@@ -41,15 +42,16 @@ except:
 
 window = pyglet.window.Window(config=config, resizable=True)
 
-
-rrt_renderer = Renderer(rrt_data=rrt_data, render_call=RRT_draw)
+render_args = {'num_samples':60, 'log_scale':True}
+rrt_renderer = Renderer(data=rrt_data, render_call=KBRLRRT_draw, **render_args)
 env_renderer = Renderer(environment=envi, render_call=Enviornment_draw)
 
 @window.event
 def on_draw():
     window.clear()
-    env_renderer.draw()
     rrt_renderer.draw()
+    env_renderer.draw()
+    
 
 @window.event
 def on_resize(width, height):
@@ -80,14 +82,23 @@ def on_key_press(symbol, modifiers):
     global index, index_range, rrt_renderer
     if symbol == key.RIGHT:
         index = np.clip(index + 1, *index_range)
-        rrt_renderer = Renderer(rrt_data=rrt_data,
-                                render_call=RRT_draw,
-                                index = index)
+        rrt_renderer = Renderer(data=rrt_data,
+                                render_call=KBRLRRT_draw,
+                                index = index, 
+                                **render_args)
     if symbol == key.LEFT:
         index = np.clip(index -1, *index_range)
-        rrt_renderer = Renderer(rrt_data=rrt_data,
-                                render_call=RRT_draw,
-                                index = index)
+        rrt_renderer = Renderer(data=rrt_data,
+                                render_call=KBRLRRT_draw,
+                                index = index,
+                                **render_args)
+        
+    if symbol == key.L:
+        render_args['log_scale'] = not render_args['log_scale']
+        rrt_renderer = Renderer(data=rrt_data,
+                                render_call=KBRLRRT_draw,
+                                index = index,
+                                **render_args)
 
 
 

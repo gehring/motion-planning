@@ -2,6 +2,13 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from pyplan.geometry import Collection
 
+def sample2DDirection(origin, l, samples):
+    theta = np.linspace(0, 2*np.pi, samples)
+    x = np.cos(theta)*l
+    y = np.sin(theta)*l
+    points = np.hstack((x.reshape((-1,1)), y.reshape((-1,1))))
+    return points + origin
+
 def parse_world(filename):
     e = ET.parse(filename).getroot()
     polygons = []
@@ -51,3 +58,45 @@ class Environment(object):
         return self.obstacles.intersects(Collection(geoms))
 
 
+class SampledExpansionEnvironment(Environment):
+    def __init__(self,
+                 obstacles, 
+                 robot, 
+                 config_range,
+                 sampler = None,
+                 line_check_samples = 3):
+        super(SampledExpansionEnvironment, self).__init__(obstacles,
+                                                          robot,
+                                                          config_range,
+                                                          line_check_samples=line_check_samples)
+        if sampler is None:
+            sampler = lambda x: self.filter_samples(x, sample2DDirection(x, 0.5, 16))
+        self.sampler = sampler
+        
+    def get_best(self, nodes, h_hat):
+        sampler = self.sampler
+        
+        best = np.inf
+        
+        for v in nodes:
+            samples = sampler(v)
+            values = h_hat(samples)
+            i = values.argmin()
+#             print 'values', values
+            if values[i] < best:
+                argbest = (v, np.linalg.norm(v - samples[i]), samples[i])
+                best = values[i]
+            
+        return argbest
+    
+    def filter_samples(self, x, samples):
+        test = np.zeros(samples.shape[0], dtype='int')
+        for i,s in enumerate(samples):
+            test[i] = not self.check_line_intersect(self.robot, x, s)
+            
+        return samples[test.nonzero()]
+            
+            
+            
+        
+        

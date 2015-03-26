@@ -1,4 +1,6 @@
 import pyglet
+import numpy as np
+
 from itertools import chain
 from geometry import Collection, Polygon
 
@@ -39,6 +41,37 @@ def RRT_draw(rrt_data,
 
 
     batch = pyglet.graphics.Batch()
+    add_RRT_draw(batch, 
+                 rrt_data, 
+                 index, 
+                 goal_color, 
+                 start_color, 
+                 node_color, 
+                 edge_color, 
+                 path_node_color, 
+                 path_edge_color, 
+                 edge_width, 
+                 node_width, 
+                 path_edge_width, 
+                 path_node_width, 
+                 start_goal_width)
+    return batch
+
+def add_RRT_draw(batch,
+                 rrt_data,
+                 index,
+                 goal_color,
+                 start_color,
+                 node_color,
+                 edge_color,
+                 path_node_color,
+                 path_edge_color,
+                 edge_width,
+                 node_width,
+                 path_edge_width,
+                 path_node_width,
+                 start_goal_width,
+                 ordering = 0):
     tree = rrt_data['screenshots'][index]
     path = rrt_data['path']
     robot = rrt_data['robot']
@@ -47,9 +80,9 @@ def RRT_draw(rrt_data,
     # set up rendering properties -------------------------
 
     # these groups enforce the rendering order
-    tree_order = pyglet.graphics.OrderedGroup(0)
-    path_order = pyglet.graphics.OrderedGroup(1)
-    goal_order = pyglet.graphics.OrderedGroup(2)
+    tree_order = pyglet.graphics.OrderedGroup(ordering)
+    path_order = pyglet.graphics.OrderedGroup(ordering + 1)
+    goal_order = pyglet.graphics.OrderedGroup(ordering + 2)
 
     # these groups inherit the render order from their parents
     # and set the line and point widths to use during render
@@ -70,9 +103,10 @@ def RRT_draw(rrt_data,
         edges = [x for e in tree.iteritems()
                         if e[0] != rrt_data['start'] for p in e
                                                 for x in robot.get_2D_coord(p)]
-        batch.add(len(edges)/2, pyglet.gl.GL_LINES, tree_group,
-                                 ('v2f', edges),
-                                 ('c4B', edge_color*(len(edges)/2)))
+        if len(edges) != 0:
+            batch.add(len(edges)/2, pyglet.gl.GL_LINES, tree_group,
+                                     ('v2f', edges),
+                                     ('c4B', edge_color*(len(edges)/2)))
 
         # draw nodes of the tree
         nodes = [ x for v in tree.keys()
@@ -109,7 +143,109 @@ def RRT_draw(rrt_data,
                              ('v2f', nodes),
                              ('c4B', color))
 
+def KBRLRRT_draw(data,
+                 index = -1,
+                 num_samples = 40,
+                 goal_color = (200, 200, 100, 255),
+                 start_color = (200, 150, 200, 255),
+                 node_color = (150, 150, 100, 255),
+                 edge_color = (200, 150, 100, 255),
+                 path_node_color = (150, 150, 150, 255),
+                 path_edge_color = (100, 150, 200, 255),
+                 hot_color = (100,100,255,100),
+                 edge_width = 1.0,
+                 node_width = 3.0,
+                 path_edge_width = 2.0,
+                 path_node_width = 6.0,
+                 start_goal_width = 8.0,
+                 rrt_order = 1,
+                 value_order = 0,
+                 log_scale = False):
+    
+    """ Get a batch renderer for a specific screenshot of a KBRLRRT algorithm. """
+
+
+    batch = pyglet.graphics.Batch()
+    
+    config_range = data['environment'].config_range
+    
+    nodes = data['screenshots'][index][0].values()
+    min = np.minimum(np.min(nodes, axis = 0), config_range[0])
+    max = np.maximum(np.max(nodes, axis = 0), config_range[1])
+    length = np.maximum(4, max - min)
+    max += length/2
+    min -= length/2
+    s_range = [min, max]
+    
+    # add rendering call to render the cost-to-go function
+    h_hat = data['screenshots'][index][1]
+    add_value_2D_draw(s_range, 
+                      h_hat, 
+                      num_samples, 
+                      batch, 
+                      hot_color, 
+                      ordering=value_order, 
+                      log_scale=log_scale)
+    
+    
+    # add the rendering call to render tree structure
+    screenshots = data['screenshots']
+    rrt_data = data.copy()
+    rrt_data['screenshots'] = [ shot[0] for shot in screenshots]
+    add_RRT_draw(batch, 
+                 rrt_data, 
+                 index, 
+                 goal_color, 
+                 start_color, 
+                 node_color, 
+                 edge_color, 
+                 path_node_color, 
+                 path_edge_color, 
+                 edge_width, 
+                 node_width, 
+                 path_edge_width, 
+                 path_node_width, 
+                 start_goal_width,
+                 ordering = rrt_order)
+    
+    
+
     return batch
+    
+
+def add_value_2D_draw(s_range,
+                      h_hat,
+                      num_samples,
+                      batch,
+                      hot_color,
+                      ordering=0,
+                      log_scale = False):
+    
+    xx, yy = np.meshgrid(np.linspace(s_range[0][0], s_range[1][0], num_samples, True),
+                         np.linspace(s_range[0][1], s_range[1][1], num_samples, True))
+    
+    points = np.hstack((xx.reshape((-1,1)), yy.reshape((-1,1))))
+    vals = h_hat(points)
+    
+    twotri = lambda i: [i, i+1, i+num_samples, i+num_samples, i+1, i+num_samples+1]
+    strip = lambda i: chain(*[twotri(j) for j in xrange(i, i+num_samples-1)])
+    indices = chain(*[strip(i) for i in xrange(0, num_samples*(num_samples-1), num_samples)])
+    
+    hot_colors =  np.array(hot_color)
+    colors =(( vals - vals.min()) / (vals.max() - vals.min()))
+    if log_scale:
+        colors =np.log2(colors + 1)
+    colors = colors[:,None] * hot_colors[None,:]
+    colors = np.clip(colors, 0 , 255).astype('int')
+    colors[:,-1] = hot_color[-1]
+    
+    # enforce the rendering order
+    render_order = pyglet.graphics.OrderedGroup(ordering)
+
+    batch.add_indexed(points.shape[0], pyglet.gl.GL_TRIANGLES, render_order,
+                list(indices),
+                ('v2f', tuple(points.flatten())),
+                ('c4B', tuple(colors.flatten())))
 
 def Enviornment_draw(environment,
                      obs_color = (200, 200, 200, 255),
